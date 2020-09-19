@@ -40,3 +40,6 @@ FreeRTOS: https://www.freertos.org/
 4. Use CMSIS-Core
 
 5. Use FreeRTOS
+
+# NOTE
+1. Currently no bss section's init in startup code
