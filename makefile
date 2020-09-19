@@ -18,11 +18,13 @@ CC = arm-none-eabi-gcc
 AS = arm-none-eabi-as
 LD = arm-none-eabi-ld
 SZ = arm-none-eabi-size
+OC = arm-none-eabi-objcopy
 #------------------------------------------------------------------------------
 # Linker flags
 #------------------------------------------------------------------------------
 LDFLAGS += -T linkerscript.ld
 LDFLAGS += --print-memory-usage
+LDFLAGS += -Map $(BINDIR)/app.map
 #------------------------------------------------------------------------------
 # Assembler flags
 #------------------------------------------------------------------------------
@@ -105,6 +107,7 @@ $(NAME): $(BINDIR)/$(NAME).elf
 
 $(BINDIR)/$(NAME).elf: startup.o $(OBJECTS)
 	$(LD) $(LDFLAGS) $(OBJDIR)/startup.o $(OBJECTS) -o $@
+	$(OC) -O binary $@ $(BINDIR)/$(NAME).bin
 #------------------------------------------------------------------------------
 # Startup secondary recipe
 #------------------------------------------------------------------------------
@@ -122,5 +125,5 @@ size:
 	$(SZ) $(OBJDIR)/*.o $(BINDIR)/$(NAME).elf
 #------------------------------------------------------------------------------
 clean:
-	rm $(OBJDIR)/*.o $(BINDIR)/$(NAME).elf
+	rm $(OBJDIR)/*.o $(BINDIR)/$(NAME).elf $(BINDIR)/$(NAME).bin $(BINDIR)/*.map
 #------------------------------------------------------------------------------
