@@ -1,7 +1,9 @@
 # arm-baremetal-gcc-make
 
 This repository is a "work in progress" attempt to create a
-make'able' gcc baremetal enviroment for Arm Cortex microcontroller.
+make'able' gcc baremetal enviroment for Arm Cortex microcontrollers.
+
+Any help or suggestions are appreciated. :P
 
 STM32L431RCT is the target here.
 
