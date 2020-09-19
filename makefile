@@ -31,6 +31,14 @@ CFLAGS_LINK = -nostartfiles -nodefaultlibs -nolibc -nostdlib -nostdinc
 CFLAGS = -ffreestanding $(CFLAGS_ARCH) $(CFLAGS_DEBUG) $(CFLAGS_LINK) $(CLFAGS_WARN) -std=c11
 
 #------------------------------------------------------------------------------
+# Assembler flags
+#------------------------------------------------------------------------------
+ASFLAGS += -mthumb
+ASFLAGS += -march=armv7e-m+fp
+ASFLAGS += -mcpu=cortex-m4
+ASFLAGS += -mfpu=fpv4-sp-d16
+ASFLAGS += -mfloat-abi=hard
+#------------------------------------------------------------------------------
 
 .PHONY: directories clean
 
@@ -50,10 +58,10 @@ $(BINDIR)/$(NAME).elf: startup.o $(OBJECTS)
 	$(LD) $(LDFLAGS) $(OBJDIR)/startup.o $(OBJECTS) -o $@
 
 #------------------------------------------------------------------------------
-
+# Startup secondary recipe
+#------------------------------------------------------------------------------
 startup.o: startup.S
-	$(AS) $< -o $(OBJDIR)/$@
-
+	$(AS) $(ASFLAGS) $< -o $(OBJDIR)/$@
 $(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
