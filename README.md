@@ -42,4 +42,3 @@ FreeRTOS: https://www.freertos.org/
 5. Use FreeRTOS
 
 # NOTE
-1. Currently no bss section's init in startup code
