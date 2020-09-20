@@ -7,6 +7,7 @@
 *.obj
 *.elf
 *.bin
+*.srec
 
 # Linker output
 *.ilk

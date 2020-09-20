@@ -137,3 +137,20 @@ fpu_enabling:
     str            r1, [r0]
     mov            pc, lr              @ Return
 @------------------------------------------------------------------------------
+@ Option bytes management, change on need...
+@------------------------------------------------------------------------------
+.section .optionbytes1 ,"a",%progbits
+.word 0xFFEFF8AA
+.word 0x00100755   @ Complement
+.section .optionbytes2 ,"a",%progbits
+.word 0xFFFFFFFF
+.word 0x00000000   @ Complement
+.section .optionbytes3 ,"a",%progbits
+.word 0xFFFF0000
+.word 0x0000FFFF   @ Complement
+.section .optionbytes4 ,"a",%progbits
+.word 0xFF00FFFF
+.word 0x00FF0000   @ Complement
+.section .optionbytes5 ,"a",%progbits
+.word 0xFF00FFFF
+.word 0x00FF0000   @ Complement

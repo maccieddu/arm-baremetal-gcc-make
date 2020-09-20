@@ -4,6 +4,7 @@ ENTRY(reset_handler)
 /* Specify the memory areas */
 MEMORY {
     FLASH (rx) : ORIGIN = 0x08000000, LENGTH = 256K
+    FUSES  (r) : ORIGIN = 0x1FFF7800, LENGTH = 40
     RAM  (rwx) : ORIGIN = 0x20000000, LENGTH = 64K
 }
 
@@ -41,6 +42,17 @@ SECTIONS {
         _sidata = .;                   /* !!! Start addr LMA of initialized data !!! */
         _zrodata = _erodata - _srodata;
     } > FLASH
+
+    /* Option Bytes (configuration fuses) */
+    .fuses : {
+        . = ALIGN(4);
+        KEEP(*(.optionbytes1))
+        KEEP(*(.optionbytes2))
+        KEEP(*(.optionbytes3))
+        KEEP(*(.optionbytes4))
+		KEEP(*(.optionbytes5))
+        . = ALIGN(4);
+    } > FUSES
 
     /* Stack allocated space goes first in RAM
      * (development phase defensive programming)

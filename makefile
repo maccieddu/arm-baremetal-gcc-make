@@ -98,7 +98,8 @@ $(NAME): $(BINDIR)/$(NAME).elf
 
 $(BINDIR)/$(NAME).elf: $(OBJDIR)/startup.o $(OBJECTS)
 	$(LD) $(LDFLAGS) $^ -o $@
-	$(OC) -O binary $@ $(BINDIR)/$(NAME).bin
+	$(OC) -g -O binary $@ $(BINDIR)/$(NAME).bin
+	$(OC) -g -O srec $@ $(BINDIR)/$(NAME).srec
 #------------------------------------------------------------------------------
 # Startup secondary target
 #------------------------------------------------------------------------------
@@ -129,5 +130,5 @@ symbols:
 # Clean target
 #------------------------------------------------------------------------------
 clean:
-	rm $(OBJDIR)/*.o $(BINDIR)/$(NAME).elf $(BINDIR)/$(NAME).bin $(BINDIR)/*.map
+	rm $(OBJDIR)/*.o $(BINDIR)/$(NAME).elf $(BINDIR)/$(NAME).bin $(BINDIR)/$(NAME).srec $(BINDIR)/*.map
 #------------------------------------------------------------------------------
