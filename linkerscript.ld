@@ -9,67 +9,73 @@ MEMORY {
 
 /* Define output sections */
 SECTIONS {
-    /* The vector code goes first into FLASH */
+    /* The vectors code goes first into FLASH */
     .vector : {
         . = ALIGN(4);
-        _svector = .;
+        _svector = .;                  /* Start addr of vector */
         KEEP(*(.vector))
         . = ALIGN(4);
-        _evector = .;
+        _evector = .;                  /* End addr of vector */
         _zvector = _evector - _svector;
     } > FLASH
 
-    /* The program code and other data goes into FLASH */
+    /* The program code goes into FLASH */
     .text : {
         . = ALIGN(4);
-        _stext = .;
-        *(.text)           /* .text sections (code) */
-        *(.text*)          /* .text* sections (code) */
+        _stext = .;                    /* Start addr of text */
+        *(.text)                       /* .text sections (code) */
+        *(.text*)                      /* .text* sections (code) */
         . = ALIGN(4);
-        _etext = .;
+        _etext = .;                    /* End addr of text */
         _ztext = _etext - _stext;
     } > FLASH
 
-    /* Constant data goes into FLASH */
+    /* Constant read-only data goes into FLASH */
     .rodata : {
         . = ALIGN(4);
-        _srodata = .;
-        *(.rodata)         /* .rodata sections (constants, strings, etc.) */
-        *(.rodata*)        /* .rodata* sections (constants, strings, etc.) */
+        _srodata = .;                  /* Start addr of read-only data */
+        *(.rodata)                     /* .rodata sections (constants, strings, etc.) */
+        *(.rodata*)                    /* .rodata* sections (constants, strings, etc.) */
         . = ALIGN(4);
-        _erodata = .;
+        _erodata = .;                  /* End addr of read-only data */
+        _sidata = .;                   /* !!! Start addr LMA of initialized data !!! */
         _zrodata = _erodata - _srodata;
     } > FLASH
 
+    /* Stack allocated space goes first in RAM
+     * (development phase defensive programming)
+     * so that in case of stack overflow HardFault will trigger
+     * and user can adjust the stack size
+     */
     .stack (NOLOAD) : {
-        _sstack = .;
+        _sstack = .;                   /* Start addr of stack */
         . = ALIGN(8);
-        . = . + 0x1000;
+        . = . + 0x1000;                /* Stack allocated space */
         . = ALIGN(8);
-        _estack = .;
+        _estack = .;                   /* End addr of stack */
         _zstack = _estack - _sstack;
     } > RAM
 
     /* Uninitialized data section */
     .bss (NOLOAD): {
         . = ALIGN(4);
-        _sbss = .;
-        *(.bss)
-        *(.bss*)
-        *(COMMON)
+        _sbss = .;                     /* Start addr of bss */
+        *(.bss)                        /* .bss sections */
+        *(.bss*)                       /* .bss* sections */
+        *(COMMON)                      /* COMMON sections */
         . = ALIGN(4);
-        _ebss = .;
+        _ebss = .;                     /* End addr of bss */
         _zbss = _ebss - _sbss;
     } > RAM
 
     /* Initialized data sections goes into RAM, load LMA copy after code */
     .data : {
         . = ALIGN(4);
-        _sdata = .;
-        *(.data)           /* .data sections */
-        *(.data*)          /* .data* sections */
+        _sdata = .;                    /* Start addr of data */
+        *(.data)                       /* .data sections */
+        *(.data*)                      /* .data* sections */
         . = ALIGN(4);
-        _edata = .;
+        _edata = .;                    /* End addr of data */
         _zdata = _edata - _sdata;
     } > RAM AT > FLASH
 }
