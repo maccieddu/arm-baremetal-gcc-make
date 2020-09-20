@@ -31,11 +31,7 @@ FreeRTOS: https://www.freertos.org/
 # TODO
 1. Improve linkerscript
 
-1.1 Improve sections placement
-
 2. Improve startup asm code
-
-2.1 Write bss section init function
 
 3. Improve makefile
 
