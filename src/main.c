@@ -1,5 +1,6 @@
 #include "main.h"
 #include "add.h"
+#include "itm.h"
 
 float i = 1.0f;
 float j = 2.0f;
@@ -19,5 +20,6 @@ void main(void)
     {
         k = i / j;
         k = add(arr[0], arr[1]);
+		ITM_SendChar((unsigned char)k);
     }
 }
