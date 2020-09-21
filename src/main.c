@@ -20,6 +20,8 @@ void main(void)
     {
         k = i / j;
         k = add(arr[0], arr[1]);
-		ITM_SendChar((unsigned char)k);
+        ITM_SendChar((unsigned char)d);
+        ITM_SendChar('a');
+        ITM_SendChar('\n');
     }
 }
