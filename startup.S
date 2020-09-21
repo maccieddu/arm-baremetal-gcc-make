@@ -92,7 +92,7 @@ clear_regs:
 init_stack:
     ldr            r0, =_sstack        @ From linkerscript
     ldr            r1, =_estack        @ From linkerscript
-    ldr            r2, =_zstack        @ From linkerscript
+    subs           r2, r1, r0          @ Calculate size of the stack section
     cmp            r2, #0              @ Check size
     beq            end_stack
     mov            r3, #0xA5           @ Canary value
@@ -106,7 +106,7 @@ end_stack:
 init_bss:
     ldr            r0, =_sbss          @ From linkerscript
     ldr            r1, =_ebss          @ From linkerscript
-    ldr            r2, =_zbss          @ From linkerscript
+    subs           r2, r1, r0          @ Calculate size of the bss section
     cmp            r2, #0              @ Check size
     beq            end_bss
     mov            r3, #0              @ Zero value
@@ -120,13 +120,14 @@ end_bss:
 init_data:
     ldr            r0, =_sidata        @ From linkerscript (LMA)
     ldr            r1, =_sdata         @ From linkerscript (VMA)
-    ldr            r2, =_zdata         @ From linkerscript
-    cmp            r2, #0              @ Check size
+    ldr            r2, =_edata         @ From linkerscript
+    subs           r3, r2, r1          @ Calculate size of the data section
+    cmp            r3, #0              @ Check size
     beq            end_copy
 copy_data:
-    ldrb           r3, [r0], #1        @ r0 source
-    strb           r3, [r1], #1        @ r1 destination
-    subs           r2, r2, #1
+    ldrb           r4, [r0], #1        @ r0 source
+    strb           r4, [r1], #1        @ r1 destination
+    subs           r3, r3, #1
     bne            copy_data
 end_copy:
     mov            pc, lr              @ Return

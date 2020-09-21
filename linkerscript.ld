@@ -17,7 +17,6 @@ SECTIONS {
         KEEP(*(.vector))
         . = ALIGN(4);
         _evector = .;                  /* End addr of vector */
-        _zvector = _evector - _svector;
     } > FLASH
 
     /* The program code goes into FLASH */
@@ -28,7 +27,6 @@ SECTIONS {
         *(.text*)                      /* .text* sections (code) */
         . = ALIGN(4);
         _etext = .;                    /* End addr of text */
-        _ztext = _etext - _stext;
     } > FLASH
 
     /* Constant read-only data goes into FLASH */
@@ -40,7 +38,6 @@ SECTIONS {
         . = ALIGN(4);
         _erodata = .;                  /* End addr of read-only data */
         _sidata = .;                   /* !!! Start addr LMA of initialized data !!! */
-        _zrodata = _erodata - _srodata;
     } > FLASH
 
     /* Option Bytes (configuration fuses) */
@@ -65,7 +62,6 @@ SECTIONS {
         . = . + 0x1000;                /* Stack allocated space */
         . = ALIGN(8);
         _estack = .;                   /* End addr of stack */
-        _zstack = _estack - _sstack;
     } > RAM
 
     /* Uninitialized data section */
@@ -77,7 +73,6 @@ SECTIONS {
         *(COMMON)                      /* COMMON sections */
         . = ALIGN(4);
         _ebss = .;                     /* End addr of bss */
-        _zbss = _ebss - _sbss;
     } > RAM
 
     /* Initialized data sections goes into RAM, load LMA copy after code */
@@ -88,6 +83,5 @@ SECTIONS {
         *(.data*)                      /* .data* sections */
         . = ALIGN(4);
         _edata = .;                    /* End addr of data */
-        _zdata = _edata - _sdata;
     } > RAM AT > FLASH
 }
