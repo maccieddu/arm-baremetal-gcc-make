@@ -154,8 +154,16 @@ fpu_enabling:
 @ Option bytes management, change on need...                       OPTION BYTES
 @------------------------------------------------------------------------------
 .section .optionbytes1 ,"a",%progbits
-.word 0xFFEFF8AA
+@------------------
+@ .word 0xFEEFF8AA   @ SRAM2 Parity Check Enabled
+@ .word 0x01100755   @ Complement
+@------------------
+@ .word 0xFDEFF8AA   @ SRAM2 Reset on SysReset
+@ .word 0x02100755   @ Complement
+@------------------
+.word 0xFFEFF8AA   @ Default
 .word 0x00100755   @ Complement
+@------------------
 .section .optionbytes2 ,"a",%progbits
 .word 0xFFFFFFFF
 .word 0x00000000   @ Complement
