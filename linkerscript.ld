@@ -47,7 +47,7 @@ SECTIONS {
         KEEP(*(.optionbytes2))
         KEEP(*(.optionbytes3))
         KEEP(*(.optionbytes4))
-		KEEP(*(.optionbytes5))
+        KEEP(*(.optionbytes5))
         . = ALIGN(4);
     } > FUSES
 

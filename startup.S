@@ -1,28 +1,38 @@
 .syntax unified
 @------------------------------------------------------------------------------
+@                                                                       GLOBALS
+@------------------------------------------------------------------------------
+.global g_pfnVectors
+.global reset_handler
+.global default_handler
+@------------------------------------------------------------------------------
+@                                                                        MACROS
+@------------------------------------------------------------------------------
 .macro def_irq_handler handler_name
 .weak  \handler_name
 .set   \handler_name, default_handler
 .endm
-def_irq_handler    nmi_handler
-def_irq_handler    hardfault_handler
-def_irq_handler    memmanage_handler
-def_irq_handler    busfalut_handler
-def_irq_handler    usagefault_handler
-def_irq_handler    svc_handler
-def_irq_handler    debugmon_handler
-def_irq_handler    pendsv_handler
-def_irq_handler    systick_handler
+def_irq_handler nmi_handler
+def_irq_handler hardfault_handler
+def_irq_handler memmanage_handler
+def_irq_handler busfalut_handler
+def_irq_handler usagefault_handler
+def_irq_handler svc_handler
+def_irq_handler debugmon_handler
+def_irq_handler pendsv_handler
+def_irq_handler systick_handler
+@------------------------------------------------------------------------------
+@                                                                          EQUS
 @------------------------------------------------------------------------------
 .equ SCB_CPACR, 0xE000ED88
 .equ SCB_CPACR_EN, 0x00F00000
 @------------------------------------------------------------------------------
-@ Vector table start
+@                                                                  VECTOR TABLE
+@------------------------------------------------------------------------------
 .section .vector,"a",%progbits
-.global g_pfnVectors
 .type g_pfnVectors, %object
 g_pfnVectors:
-    @ From 0x0000-0000
+    @ From addr 0x0000-0000
     .word _estack                      @ From linkerscript
     .word reset_handler
     .word nmi_handler
@@ -40,13 +50,13 @@ g_pfnVectors:
     .word pendsv_handler
     .word systick_handler
     .space 448
-    @ To 0x0000-0200
-@ Vector table end
+    @ To addr 0x0000-0200
+@------------------------------------------------------------------------------
+@                                                                 RESET_HANDLER
 @------------------------------------------------------------------------------
 .section .text
 .thumb_func
-.global reset_handler
-.type   reset_handler, %function
+.type reset_handler, %function
 reset_handler:
     bl             setup_sp
     mov            r0, #1
@@ -59,14 +69,17 @@ reset_handler:
     bl             clear_regs
     mov            r0, #0
     msr            primask, r0         @ Enable interrupt
-    b              main                @ Transfer control to C main() function
-    b              .
+    bl             main                @ Transfer control to C main() function
+    b              .                   @ Endless loop
 @------------------------------------------------------------------------------
+@                                                               DEFAULT_HANDLER
+@------------------------------------------------------------------------------
+.section .text
 .thumb_func
 .weak default_handler
 .type default_handler, %function
 default_handler:
-    b              .
+    b              .                   @ Endless loop
 @------------------------------------------------------------------------------
 setup_sp:
     mrs            r0, msp
@@ -138,7 +151,7 @@ fpu_enabling:
     str            r1, [r0]
     mov            pc, lr              @ Return
 @------------------------------------------------------------------------------
-@ Option bytes management, change on need...
+@ Option bytes management, change on need...                       OPTION BYTES
 @------------------------------------------------------------------------------
 .section .optionbytes1 ,"a",%progbits
 .word 0xFFEFF8AA
