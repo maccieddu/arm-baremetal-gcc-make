@@ -57,8 +57,8 @@ SECTIONS {
      * and user can adjust the stack size
      */
     .stack (NOLOAD) : {
-        _sstack = .;                   /* Start addr of stack */
         . = ALIGN(8);
+        _sstack = .;                   /* Start addr of stack */
         . = . + 0x1000;                /* Stack allocated space */
         . = ALIGN(8);
         _estack = .;                   /* End addr of stack */
