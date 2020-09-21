@@ -12,15 +12,111 @@
 .weak  \handler_name
 .set   \handler_name, default_handler
 .endm
-def_irq_handler nmi_handler
-def_irq_handler hardfault_handler
-def_irq_handler memmanage_handler
-def_irq_handler busfalut_handler
-def_irq_handler usagefault_handler
-def_irq_handler svc_handler
-def_irq_handler debugmon_handler
-def_irq_handler pendsv_handler
-def_irq_handler systick_handler
+@--------------------------------------
+@                            EXCEPTIONS
+@--------------------------------------
+def_irq_handler nmi_irq_handler
+def_irq_handler hardfault_irq_handler
+def_irq_handler memmanage_irq_handler
+def_irq_handler busfault_irq_handler
+def_irq_handler usagefault_irq_handler
+@ Reserved
+@ Reserved
+@ Reserved
+@ Reserved
+def_irq_handler svc_irq_handler
+def_irq_handler debugmon_irq_handler
+@ Reserved
+def_irq_handler pendsv_irq_handler
+def_irq_handler systick_irq_handler
+@--------------------------------------
+@                            INTERRUPTS
+@--------------------------------------
+def_irq_handler wwdg_irq_handler
+def_irq_handler pvd_pvm_irq_handler
+def_irq_handler rtc_stamp_irq_handler
+def_irq_handler rtc_wkup_irq_handler
+def_irq_handler flash_irq_handler
+def_irq_handler rcc_irq_handler
+def_irq_handler exti0_irq_handler
+def_irq_handler exti1_irq_handler
+def_irq_handler exti2_irq_handler
+def_irq_handler exti3_irq_handler
+def_irq_handler exti4_irq_handler
+def_irq_handler dma1_ch1_irq_handler
+def_irq_handler dma1_ch2_irq_handler
+def_irq_handler dma1_ch3_irq_handler
+def_irq_handler dma1_ch4_irq_handler
+def_irq_handler dma1_ch5_irq_handler
+def_irq_handler dma1_ch6_irq_handler
+def_irq_handler dma1_ch7_irq_handler
+def_irq_handler adc1_irq_handler
+def_irq_handler can1_tx_irq_handler
+def_irq_handler can1_rx0_irq_handler
+def_irq_handler can1_rx1_irq_handler
+def_irq_handler can1_sce_irq_handler
+def_irq_handler exti9_5_irq_handler
+def_irq_handler tim1_brk_tim15_irq_handler
+def_irq_handler tim1_up_tim16_irq_handler
+def_irq_handler tim1_trg_com_irq_handler
+def_irq_handler tim1_cc_irq_handler
+def_irq_handler tim2_irq_handler
+@ Reserved
+@ Reserved
+def_irq_handler i2c1_ev_irq_handler
+def_irq_handler i2c1_er_irq_handler
+def_irq_handler i2c2_ev_irq_handler
+def_irq_handler i2c2_er_irq_handler
+def_irq_handler spi1_irq_handler
+def_irq_handler spi2_irq_handler
+def_irq_handler usart1_irq_handler
+def_irq_handler usart2_irq_handler
+def_irq_handler usart3_irq_handler
+def_irq_handler exti15_10_irq_handler
+def_irq_handler rtc_alarm_irq_handler
+@ Reserved
+@ Reserved
+@ Reserved
+@ Reserved
+@ Reserved
+@ Reserved
+@ Reserved
+def_irq_handler sdmmc1_irq_handler
+@ Reserved
+def_irq_handler spi3_irq_handler
+@ Reserved
+@ Reserved
+def_irq_handler tim6_dacunder_irq_handler
+def_irq_handler tim7_irq_handler
+def_irq_handler dma2_ch1_irq_handler
+def_irq_handler dma2_ch2_irq_handler
+def_irq_handler dma2_ch3_irq_handler
+def_irq_handler dma2_ch4_irq_handler
+def_irq_handler dma2_ch5_irq_handler
+@ Reserved
+@ Reserved
+@ Reserved
+def_irq_handler comp_irq_handler
+def_irq_handler lptim1_irq_handler
+def_irq_handler lptim2_irq_handler
+@ Reserved
+def_irq_handler dma2_ch6_irq_handler
+def_irq_handler dma2_ch7_irq_handler
+def_irq_handler lpuart1_irq_handler
+def_irq_handler quadspi_irq_handler
+def_irq_handler i2c3_ev_irq_handler
+def_irq_handler i2c3_er_irq_handler
+def_irq_handler sai1_irq_handler
+@ Reserved
+def_irq_handler swpmi1_irq_handler
+def_irq_handler tsc_irq_handler
+@ Reserved
+@ Reserved
+def_irq_handler rng_irq_handler
+def_irq_handler fpu_irq_handler
+def_irq_handler crs_irq_handler
+@ Reserved
+@ Reserved
 @------------------------------------------------------------------------------
 @                                                                          EQUS
 @------------------------------------------------------------------------------
@@ -33,23 +129,110 @@ def_irq_handler systick_handler
 .type g_pfnVectors, %object
 g_pfnVectors:
     @ From addr 0x0000-0000
+    @----------------------------------  Exceptions
     .word _estack                      @ From linkerscript
     .word reset_handler
-    .word nmi_handler
-    .word hardfault_handler
-    .word memmanage_handler
-    .word busfalut_handler
-    .word usagefault_handler
+    .word nmi_irq_handler
+    .word hardfault_irq_handler
+    .word memmanage_irq_handler
+    .word busfault_irq_handler
+    .word usagefault_irq_handler
     .word default_handler              @ Reserved
     .word default_handler              @ Reserved
     .word default_handler              @ Reserved
     .word default_handler              @ Reserved
-    .word svc_handler
-    .word debugmon_handler
+    .word svc_irq_handler
+    .word debugmon_irq_handler
     .word default_handler              @ Reserved
-    .word pendsv_handler
-    .word systick_handler
-    .space 448
+    .word pendsv_irq_handler
+    .word systick_irq_handler
+    @----------------------------------  Interrupts
+    .word wwdg_irq_handler
+    .word pvd_pvm_irq_handler
+    .word rtc_stamp_irq_handler
+    .word rtc_wkup_irq_handler
+    .word flash_irq_handler
+    .word rcc_irq_handler
+    .word exti0_irq_handler
+    .word exti1_irq_handler
+    .word exti2_irq_handler
+    .word exti3_irq_handler
+    .word exti4_irq_handler
+    .word dma1_ch1_irq_handler
+    .word dma1_ch2_irq_handler
+    .word dma1_ch3_irq_handler
+    .word dma1_ch4_irq_handler
+    .word dma1_ch5_irq_handler
+    .word dma1_ch6_irq_handler
+    .word dma1_ch7_irq_handler
+    .word adc1_irq_handler
+    .word can1_tx_irq_handler
+    .word can1_rx0_irq_handler
+    .word can1_rx1_irq_handler
+    .word can1_sce_irq_handler
+    .word exti9_5_irq_handler
+    .word tim1_brk_tim15_irq_handler
+    .word tim1_up_tim16_irq_handler
+    .word tim1_trg_com_irq_handler
+    .word tim1_cc_irq_handler
+    .word tim2_irq_handler
+    .word default_handler              @ Reserved
+    .word default_handler              @ Reserved
+    .word i2c1_ev_irq_handler
+    .word i2c1_er_irq_handler
+    .word i2c2_ev_irq_handler
+    .word i2c2_er_irq_handler
+    .word spi1_irq_handler
+    .word spi2_irq_handler
+    .word usart1_irq_handler
+    .word usart2_irq_handler
+    .word usart3_irq_handler
+    .word exti15_10_irq_handler
+    .word rtc_alarm_irq_handler
+    .word default_handler              @ Reserved
+    .word default_handler              @ Reserved
+    .word default_handler              @ Reserved
+    .word default_handler              @ Reserved
+    .word default_handler              @ Reserved
+    .word default_handler              @ Reserved
+    .word default_handler              @ Reserved
+    .word sdmmc1_irq_handler
+    .word default_handler              @ Reserved
+    .word spi3_irq_handler
+    .word default_handler              @ Reserved
+    .word default_handler              @ Reserved
+    .word tim6_dacunder_irq_handler
+    .word tim7_irq_handler
+    .word dma2_ch1_irq_handler
+    .word dma2_ch2_irq_handler
+    .word dma2_ch3_irq_handler
+    .word dma2_ch4_irq_handler
+    .word dma2_ch5_irq_handler
+    .word default_handler              @ Reserved
+    .word default_handler              @ Reserved
+    .word default_handler              @ Reserved
+    .word comp_irq_handler
+    .word lptim1_irq_handler
+    .word lptim2_irq_handler
+    .word default_handler              @ Reserved
+    .word dma2_ch6_irq_handler
+    .word dma2_ch7_irq_handler
+    .word lpuart1_irq_handler
+    .word quadspi_irq_handler
+    .word i2c3_ev_irq_handler
+    .word i2c3_er_irq_handler
+    .word sai1_irq_handler
+    .word default_handler              @ Reserved
+    .word swpmi1_irq_handler
+    .word tsc_irq_handler
+    .word default_handler              @ Reserved
+    .word default_handler              @ Reserved
+    .word rng_irq_handler
+    .word fpu_irq_handler
+    .word crs_irq_handler
+    .word default_handler              @ Reserved
+    .word default_handler              @ Reserved
+    .space 108
     @ To addr 0x0000-0200
 @------------------------------------------------------------------------------
 @                                                                 RESET_HANDLER
