@@ -8,6 +8,8 @@ MEMORY {
     RAM  (rwx) : ORIGIN = 0x20000000, LENGTH = 64K
 }
 
+_eram = 0x20000000 + 64K;              /* End addr of SRAM */
+
 /* Define output sections */
 SECTIONS {
     /* The vectors code goes first into FLASH */

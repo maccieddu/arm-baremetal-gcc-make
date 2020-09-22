@@ -248,6 +248,7 @@ reset_handler:
     bl             init_stack          @ Init stack with canary value
     bl             init_bss            @ Init bss with zero value
     bl             init_data           @ Copy initialized data from flash to ram
+    bl             clear_ram           @ Init remaining ram to know value 0xFF
     bl             fpu_enabling
     bl             clear_regs
     mov            r0, #0
@@ -283,6 +284,7 @@ clear_regs:
     mov            r10, #0
     mov            r11, #0
     mov            r12, #0
+    msr            apsr, r0
     mov            pc, lr              @ Return
 @------------------------------------------------------------------------------
 init_stack:
@@ -326,6 +328,20 @@ copy_data:
     subs           r3, r3, #1
     bne            copy_data
 end_copy:
+    mov            pc, lr              @ Return
+@------------------------------------------------------------------------------
+clear_ram:
+    ldr            r0, =_edata         @ From linkerscript
+    ldr            r1, =_eram          @ From linkerscript
+    subs           r2, r1, r0
+    cmp            r2, #0              @ Check size
+    beq            end_ram
+    mov            r3, #0xFF           @ Canary value
+ff_ram:
+    strb           r3, [r0], #1
+    subs           r2, #1
+    bne            ff_ram
+end_ram:
     mov            pc, lr              @ Return
 @------------------------------------------------------------------------------
 fpu_enabling:
