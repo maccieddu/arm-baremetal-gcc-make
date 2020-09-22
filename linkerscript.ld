@@ -84,4 +84,20 @@ SECTIONS {
         . = ALIGN(4);
         _edata = .;                    /* End addr of data */
     } > RAM AT > FLASH
+
+    /* Explicitly discard sections that we don't need. */
+    /DISCARD/ :
+    {
+        *(.glue_7)                     /* glue arm to thumb code */
+        *(.glue_7t)                    /* glue thumb to arm code */
+        *(.eh_frame)
+        *(.v4_bx)                      /* ARMv4 interworking fixup for missing BX */
+        *(.vfp11_veneer)               /* VFP11 bugfixes s.a. http://sourceware.org/ml/binutils/2006-12/msg00196.html */
+        *(.iplt .igot.plt)             /* STT_GNU_IFUNC symbols */
+        *(.rel.*)                      /* dynamic relocations */
+        *(.ARM.exidx* .gnu.linkonce.armexidx.*) /* index entries for section unwinding */
+        *(.ARM.extab* .gnu.linkonce.armextab.*) /* exception unwinding information */
+    }
+
+    .ARM.attributes 0 : { *(.ARM.attributes) }
 }
