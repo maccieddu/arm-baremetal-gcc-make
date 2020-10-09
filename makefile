@@ -26,6 +26,7 @@ NM = arm-none-eabi-nm
 LDFLAGS += -T linkerscript.ld
 LDFLAGS += --print-memory-usage
 LDFLAGS += -Map $(BINDIR)/app.map
+LDFLAGS += --gc-sections
 #------------------------------------------------------------------------------
 # Assembler flags
 #------------------------------------------------------------------------------
