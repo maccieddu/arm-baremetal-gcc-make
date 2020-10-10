@@ -4,6 +4,7 @@ NAME = app
 #------------------------------------------------------------------------------
 SRCDIR = src
 OBJDIR = obj
+RESDIR = res
 BINDIR = bin
 #------------------------------------------------------------------------------
 # Files
@@ -14,18 +15,35 @@ OBJECTS  := $(SOURCES:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 #------------------------------------------------------------------------------
 # Toolchain
 #------------------------------------------------------------------------------
-CC = arm-none-eabi-gcc
-AS = arm-none-eabi-as
-LD = arm-none-eabi-ld
-SZ = arm-none-eabi-size
-OC = arm-none-eabi-objcopy
-NM = arm-none-eabi-nm
+TRIPLE = arm-none-eabi-
+CC = $(TRIPLE)gcc
+AS = $(TRIPLE)as
+LD = $(TRIPLE)ld
+SZ = $(TRIPLE)size
+OC = $(TRIPLE)objcopy
+OD = $(TRIPLE)objdump
+NM = $(TRIPLE)nm
+#------------------------------------------------------------------------------
+# Objcopy flags
+#------------------------------------------------------------------------------
+OCFLAGS += -g
+OCFLAGS += -O
+OCFLAGS += srec
+#------------------------------------------------------------------------------
+# Objdump flags
+#------------------------------------------------------------------------------
+ODFLAGS += -d
+ODFLAGS += -S
+#------------------------------------------------------------------------------
+# Nm flags
+#------------------------------------------------------------------------------
+NMFLAGS += -n
 #------------------------------------------------------------------------------
 # Linker flags
 #------------------------------------------------------------------------------
 LDFLAGS += -T linkerscript.ld
 LDFLAGS += --print-memory-usage
-LDFLAGS += -Map $(BINDIR)/app.map
+LDFLAGS += -Map $(RESDIR)/$(NAME).map
 LDFLAGS += --gc-sections
 #------------------------------------------------------------------------------
 # Assembler flags
@@ -38,83 +56,76 @@ ASFLAGS += -mfloat-abi=hard
 #------------------------------------------------------------------------------
 # Compiler architecture flags
 #------------------------------------------------------------------------------
-CFLAGS_ARCH += -mthumb
-CFLAGS_ARCH += -march=armv7e-m+fp
-CFLAGS_ARCH += -mtune=cortex-m4
-CFLAGS_ARCH += -mfpu=fpv4-sp-d16
-CFLAGS_ARCH += -mfloat-abi=hard
+CCFLAGS_ARCH += -mthumb
+CCFLAGS_ARCH += -march=armv7e-m+fp
+CCFLAGS_ARCH += -mtune=cortex-m4
+CCFLAGS_ARCH += -mfpu=fpv4-sp-d16
+CCFLAGS_ARCH += -mfloat-abi=hard
 #------------------------------------------------------------------------------
 # Compiler debugging flags
 #------------------------------------------------------------------------------
-CFLAGS_DBG += -ggdb
+CCFLAGS_DBG += -ggdb
 #------------------------------------------------------------------------------
 # Compiler optimization flags
 #------------------------------------------------------------------------------
-CFLAGS_OPT += -Og
-CFLAGS_OPT += -ffunction-sections
-CFLAGS_OPT += -fdata-sections
+CCFLAGS_OPT += -Og
+CCFLAGS_OPT += -ffunction-sections
+CCFLAGS_OPT += -fdata-sections
 #------------------------------------------------------------------------------
 # Compiler warning flags
 #------------------------------------------------------------------------------
-CLFAGS_WARN += -Wall
-CLFAGS_WARN += -Wextra
+CCLFAGS_WARN += -Wall
+CCLFAGS_WARN += -Wextra
 #------------------------------------------------------------------------------
 # Compiler linking flags
 #------------------------------------------------------------------------------
-CFLAGS_LINK += -nostartfiles
-CFLAGS_LINK += -nodefaultlibs
-CFLAGS_LINK += -nolibc
-CFLAGS_LINK += -nostdlib
+CCFLAGS_LINK += -nostartfiles
+CCFLAGS_LINK += -nodefaultlibs
+CCFLAGS_LINK += -nolibc
+CCFLAGS_LINK += -nostdlib
 #------------------------------------------------------------------------------
 # Compiler directories flags
 #------------------------------------------------------------------------------
-CFLAGS_DIR += -nostdinc
+CCFLAGS_DIR += -nostdinc
 #------------------------------------------------------------------------------
 # Compiler dialect flags
 #------------------------------------------------------------------------------
-CFLAGS_DIAL += -std=c11
+CCFLAGS_DIAL += -std=c11
 #------------------------------------------------------------------------------
 # Compiler flags
 #------------------------------------------------------------------------------
-CFLAGS += -ffreestanding
-CFLAGS += $(CFLAGS_ARCH)
-CFLAGS += $(CFLAGS_DBG)
-CFLAGS += $(CFLAGS_OPT)
-CFLAGS += $(CLFAGS_WARN)
-CFLAGS += $(CFLAGS_LINK)
-CFLAGS += $(CFLAGS_DIR)
-CFLAGS += $(CFLAGS_DIAL)
-#------------------------------------------------------------------------------
-# PHONY
-#------------------------------------------------------------------------------
-.PHONY: directories size symbols clean
-#------------------------------------------------------------------------------
-# Default target
-#------------------------------------------------------------------------------
-all: $(NAME)
+CCFLAGS += -ffreestanding
+CCFLAGS += $(CCFLAGS_ARCH)
+CCFLAGS += $(CCFLAGS_DBG)
+CCFLAGS += $(CCFLAGS_OPT)
+CCFLAGS += $(CCLFAGS_WARN)
+CCFLAGS += $(CCFLAGS_LINK)
+CCFLAGS += $(CCFLAGS_DIR)
+CCFLAGS += $(CCFLAGS_DIAL)
 #------------------------------------------------------------------------------
 # Primary app target
 #------------------------------------------------------------------------------
-$(NAME): $(BINDIR)/$(NAME).elf
-
 $(BINDIR)/$(NAME).elf: $(OBJDIR)/startup.o $(OBJECTS)
 	$(LD) $(LDFLAGS) $^ -o $@
-	$(OC) -g -O srec $@ $(BINDIR)/$(NAME).srec
+	$(OD) $(ODFLAGS) $@ > $(RESDIR)/$(NAME).lst
+	$(OC) $(OCFLAGS) $@ $(RESDIR)/$(NAME).srec
+	$(NM) $(NMFLAGS) $@ > $(RESDIR)/$(NAME).sym
 #------------------------------------------------------------------------------
-# Startup secondary target
+# Secondary startup target
 #------------------------------------------------------------------------------
 $(OBJDIR)/startup.o: startup.S
 	$(AS) $(ASFLAGS) $< -o $@
 #------------------------------------------------------------------------------
-# Sources secondary target
+# Secondary sources target
 #------------------------------------------------------------------------------
-$(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.c
-	$(CC) $(CFLAGS) -c $< -o $@
+$(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.c $(SRCDIR)/%.h
+	$(CC) $(CCFLAGS) -c $< -o $@
 #------------------------------------------------------------------------------
 # Directories target
 #------------------------------------------------------------------------------
 directories:
 	mkdir -p $(OBJDIR)
+	mkdir -p $(RESDIR)
 	mkdir -p $(BINDIR)
 #------------------------------------------------------------------------------
 # Size target
@@ -122,13 +133,10 @@ directories:
 size:
 	$(SZ) $(OBJDIR)/*.o $(BINDIR)/$(NAME).elf
 #------------------------------------------------------------------------------
-# Symbols terget
-#------------------------------------------------------------------------------
-symbols:
-	$(NM) -n $(BINDIR)/$(NAME).elf
-#------------------------------------------------------------------------------
 # Clean target
 #------------------------------------------------------------------------------
 clean:
-	rm $(OBJDIR)/*.o $(BINDIR)/$(NAME).elf $(BINDIR)/$(NAME).srec $(BINDIR)/*.map
+	rm $(BINDIR)/*
+	rm $(OBJDIR)/*
+	rm $(RESDIR)/*
 #------------------------------------------------------------------------------
